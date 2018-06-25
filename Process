@@ -1,3 +1,15 @@
+Problems before the Docker-era
+  - Compatibility issues of multiple services and versions of operating system.
+  - Also compatibility between services and the libraries versions of dependencies
+  - Long setup time of development environment
+  - Different results from different environment
+  
+ How Docker fix this
+  - Each component of the application has its own separate container with its OWN libraries and its OWN dependencies
+  - Container:
+    => An isolated environment that has their own processes, services, networking interfaces, and mounts under the same operating system kernel unlike virtual machines (VM)
+  - Purpose is to CONTAINERIZE applications, SHIP them, and RUN them
+
 ## Install Docker and Getting Started
 # Install Docker CE (Community Edition) from https://docs.docker.com. Follow directions on installing it
 https://docs.docker.com/install/linux/docker-ce/ubuntu/#os-requirements
@@ -52,16 +64,16 @@ docker run -p 8080:8080 <image> = port mapping to for external access to web ser
 docker run -p 8080:8080 -v <host data directory>:<image container directory> -u root <image> = uses same data across containers that is saved in host
 docker build Dockerfile -t <dockerfile> = builds layers of the container
 docker history <dockerfile> = see history of changes made to dockerfile and sizes
+docker network ls = list all available networks
 
-
-Dockerfile 
+## Dockerfile 
 INSTRUCTION ARGUMENT
 FROM <image>   ==> Start from a base OS or another image
 RUN <commands> ==> Install all dependencies
 COPY <code>    ==> Copy source code
 ENTRYPOINT <entrypoint> ==> Specify entrypoint
 
-Options
+## Options
 -d = detach
 -i = input
 -a = all
@@ -70,8 +82,8 @@ Options
 -u = user
 -t = tag
 
-Demo:
-Building a Dockerfile with Simple Flask-App
+## Demo:
+# Building a Dockerfile with Simple Flask-App
   docker run ps                ==> Check for any running containers
   docker run -it ubuntu bash   ==> Create a ubuntu container and do something in terminal
     apt-get install -y python  ==> Install python within ubuntu container
@@ -96,7 +108,7 @@ Building a Dockerfile with Simple Flask-App
     docker push <custom docker image> ==> pushes new image to your repository
     docker login               ==> login to your docker hub if reaching in permission denied issue
     
-Creating a Docker Compose File (container with more than one services)
+## Creating a Docker Compose File (container with more than one services)
   docker-compose.yml (Uses YAML to define)
   
   services:     ==> Name of dictionary
@@ -105,6 +117,9 @@ Creating a Docker Compose File (container with more than one services)
       image: "llambo/my-simple-webapp"  ==> specifications
       ports:
           - "80:5000"   ==> port mapping
+      deploy:
+          replicas: 5 ==> require 5 nodes
+          
     database:   ==> list item #2
       image: "mysql"
       volumes:
@@ -117,4 +132,21 @@ Creating a Docker Compose File (container with more than one services)
  docker-compose stop   ==> stop all container
  docker-compose down   ==> stop all container and remove them entirely
  
- 
+ ## Docker SWARM
+  a cluster of docker hosts where one is designated as the manager and the others as workers
+  
+  docker swarm init ==> initialize the target host to be manager
+  docker swarm join --token <token> ==> to join the cluster with the generated token by the manager
+
+## Docker Networking
+when docker is installed, it automatically creates networks: Bridge, none, and host
+Bridge = private and internal for each containers
+
+by default, docker host only has one internal network that can be accessed by the containers of that host. 
+To create another internal network wihtin the host
+  docker network create \
+    --driver bridge \
+    --subnet 182.18.0.0/16
+    custom-isolated-network
+    
+    
