@@ -47,10 +47,74 @@ docker exec <container name> cat <file or directory> = list content of the file 
 docker run -d <container> sleep # = runs an empty container in the background(detach) for x amount of seconds before it shut down
 docker run -v <external directory>:<container directory> <image> = stores the data from container in case you want to persist data after the container is deleted. Else all data would be gone
 docker attach <container-id> = brings container back to the foreground
+docker inspect <container-id> = (used for jenkins) inspected properties of that container
+docker run -p 8080:8080 <image> = port mapping to for external access to web server
+docker run -p 8080:8080 -v <host data directory>:<image container directory> -u root <image> = uses same data across containers that is saved in host
+docker build Dockerfile -t <dockerfile> = builds layers of the container
+docker history <dockerfile> = see history of changes made to dockerfile and sizes
 
+
+Dockerfile 
+INSTRUCTION ARGUMENT
+FROM <image>   ==> Start from a base OS or another image
+RUN <commands> ==> Install all dependencies
+COPY <code>    ==> Copy source code
+ENTRYPOINT <entrypoint> ==> Specify entrypoint
 
 Options
 -d = detach
 -i = input
 -a = all
 -p = port
+-v = volume mapping
+-u = user
+-t = tag
+
+Demo:
+Building a Dockerfile with Simple Flask-App
+  docker run ps                ==> Check for any running containers
+  docker run -it ubuntu bash   ==> Create a ubuntu container and do something in terminal
+    apt-get install -y python  ==> Install python within ubuntu container
+    apt-get update             ==> Got an error, update repo first
+    apt-get install -y python  ==> Try downloading python again
+    python                     ==> Check python version
+    exit()                     ==> Exit python 
+    pip install flask          ==> Install flask
+    apt-get install python-pip ==> Install pip if not available
+    cat > /opt/app.py          ==> Create the code for app (write code then ctrl+C when done)
+    cd /opt
+    FLASK_APP=app.py flask run --host=0.0.0.0 ==> Get the flask app running
+    docker inpect <container id> ==> Find what the ip address for current container
+    ipaddress:5000             ==> Where the flask app is running
+    Ctrl+C                     ==> return to host/docker
+    mkdir <dir name>           ==> Start to containerize
+    cd <dir name>              ==> Be in the directory
+    cat > Dockerfile           ==> Create dockerfile
+    cat > app.py               ==> Create the source code for the container
+    docker build .             ==> Build layers for the image
+    docker build . -t <dockerhub acc name>/my-simple-webapp ==> Builds the layers image and tagging it with a unique name and the acc repository
+    docker push <custom docker image> ==> pushes new image to your repository
+    docker login               ==> login to your docker hub if reaching in permission denied issue
+    
+Creating a Docker Compose File (container with more than one services)
+  docker-compose.yml (Uses YAML to define)
+  
+  services:     ==> Name of dictionary
+  
+    web:        ==> list item #1
+      image: "llambo/my-simple-webapp"  ==> specifications
+      ports:
+          - "80:5000"   ==> port mapping
+    database:   ==> list item #2
+      image: "mysql"
+      volumes:
+          - /opt/data:/var/lib/mysql
+      environment:
+          - MYSQL_ROOT_PASSWORD=password
+    
+ This is for when in production server, you dont want to be using docker run command
+ docker-compose up     ==> bring up the container
+ docker-compose stop   ==> stop all container
+ docker-compose down   ==> stop all container and remove them entirely
+ 
+ 
