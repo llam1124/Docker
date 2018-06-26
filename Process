@@ -155,5 +155,5 @@ You can change the port mapping by directly editing the hostconfig.json file at 
 You can determine the [hash_of_the_container] via the docker inspect <container_name> command and the value of the "Id" field is the hash. 
 1) stop the container 
 2) change the file
-3) restart your docker engine (to flush/clear config caches)
+3) restart your docker engine (to flush/clear config caches) [service docker restart]
 4) start the container
