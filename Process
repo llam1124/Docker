@@ -150,4 +150,10 @@ To create another internal network wihtin the host
     --subnet 182.18.0.0/16
     custom-isolated-network
     
-    
+## Re-configure Port Mapping of an Existing Container
+You can change the port mapping by directly editing the hostconfig.json file at /var/lib/docker/containers/[hash_of_the_container]/hostconfig.json
+You can determine the [hash_of_the_container] via the docker inspect <container_name> command and the value of the "Id" field is the hash. 
+1) stop the container 
+2) change the file
+3) restart your docker engine (to flush/clear config caches)
+4) start the container
