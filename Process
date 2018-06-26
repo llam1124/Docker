@@ -65,6 +65,7 @@ docker run -p 8080:8080 -v <host data directory>:<image container directory> -u 
 docker build Dockerfile -t <dockerfile> = builds layers of the container
 docker history <dockerfile> = see history of changes made to dockerfile and sizes
 docker network ls = list all available networks
+docker start -ai <container-id> = start up previous containers by attaching and interacting
 
 ## Dockerfile 
 INSTRUCTION ARGUMENT
@@ -75,7 +76,7 @@ ENTRYPOINT <entrypoint> ==> Specify entrypoint
 
 ## Options
 -d = detach
--i = input
+-i = interactive
 -a = all
 -p = port
 -v = volume mapping
